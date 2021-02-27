@@ -31,9 +31,16 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigate
+import androidx.navigation.compose.rememberNavController
+import com.example.androiddevchallenge.models.Puppy
 import com.example.androiddevchallenge.theme.AppTheme
 import com.example.androiddevchallenge.theme.typography
 import com.example.androiddevchallenge.ui.PuppyDataProvider
+import com.example.androiddevchallenge.ui.PuppyDetailsScreen
 import com.example.androiddevchallenge.ui.PuppyListScreen
 
 class MainActivity : AppCompatActivity() {
@@ -49,24 +56,43 @@ class MainActivity : AppCompatActivity() {
 
 @Composable
 fun PickAPup() {
-    Surface(color = MaterialTheme.colors.background) {
-        Column {
-            Text(
-                text = "Pick A Pup",
-                style = typography.h4,
-                fontFamily = FontFamily(
-                    fonts = listOf(
-                        Font(R.font.akaya_telivigala_regular)
-                    )
-                ),
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp)
-            )
-            PuppyListScreen(puppies = PuppyDataProvider.puppies) {
+    val navController = rememberNavController()
+    SetUpRoutes(navController = navController)
+}
 
+@Composable
+fun SetUpRoutes(navController: NavHostController) {
+    NavHost(navController, startDestination = Destination.PUPPY_LIST.route) {
+        composable(Destination.PUPPY_LIST.route) {
+            Surface(color = MaterialTheme.colors.background) {
+                Column {
+                    Text(
+                        text = "Pick A Pup",
+                        style = typography.h4,
+                        fontFamily = FontFamily(
+                            fonts = listOf(
+                                Font(R.font.akaya_telivigala_regular)
+                            )
+                        ),
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 8.dp)
+                    )
+                    PuppyListScreen(
+                        puppies = PuppyDataProvider.puppies
+                    ) { puppy ->
+                        navController.currentBackStackEntry
+                            ?.arguments?.putParcelable("puppy", puppy)
+                        navController.navigate(Destination.PUPPY_DETAILS.route)
+                    }
+                }
             }
+        }
+        composable(Destination.PUPPY_DETAILS.route) {
+            val puppy = navController.previousBackStackEntry
+                ?.arguments?.getParcelable<Puppy>("puppy")
+            PuppyDetailsScreen(puppy = puppy)
         }
     }
 }
@@ -87,3 +113,7 @@ fun DarkPreview() {
     }
 }
 
+enum class Destination(val route: String) {
+    PUPPY_LIST("puppy_list"),
+    PUPPY_DETAILS("puppy_details")
+}

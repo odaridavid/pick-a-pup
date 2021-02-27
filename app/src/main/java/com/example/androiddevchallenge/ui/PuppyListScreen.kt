@@ -15,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.androiddevchallenge.models.Puppy
 import com.example.androiddevchallenge.theme.green300
@@ -23,13 +22,18 @@ import com.example.androiddevchallenge.theme.red300
 import com.example.androiddevchallenge.theme.typography
 
 @Composable
-fun PuppyListScreen(puppies: List<Puppy>, onClick: () -> Unit) {
+fun PuppyListScreen(puppies: List<Puppy>, onClick: (Puppy) -> Unit) {
     LazyColumn(
         modifier = Modifier.fillMaxWidth()
     ) {
 
         items(puppies) { puppy ->
-            Card(elevation = 0.dp, modifier = Modifier.clickable(onClick = onClick)) {
+            Card(
+                elevation = 0.dp,
+                modifier = Modifier.clickable {
+                    onClick(puppy)
+                }
+            ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
@@ -65,13 +69,5 @@ fun PuppyListScreen(puppies: List<Puppy>, onClick: () -> Unit) {
             }
             Divider()
         }
-    }
-}
-
-@Preview
-@Composable
-fun PuppyList() {
-    PuppyListScreen(puppies = PuppyDataProvider.puppies) {
-
     }
 }
