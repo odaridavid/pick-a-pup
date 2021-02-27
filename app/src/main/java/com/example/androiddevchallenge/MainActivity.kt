@@ -18,19 +18,14 @@ package com.example.androiddevchallenge
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -38,70 +33,28 @@ import androidx.navigation.compose.navigate
 import androidx.navigation.compose.rememberNavController
 import com.example.androiddevchallenge.models.Puppy
 import com.example.androiddevchallenge.theme.AppTheme
-import com.example.androiddevchallenge.theme.typography
-import com.example.androiddevchallenge.ui.PuppyDataProvider
 import com.example.androiddevchallenge.ui.PuppyDetailsScreen
 import com.example.androiddevchallenge.ui.PuppyListScreen
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             AppTheme {
-                PickAPup()
+                InitPickAPup()
             }
         }
     }
 }
 
-@Composable
-fun PickAPup() {
-    val navController = rememberNavController()
-    SetUpRoutes(navController = navController)
-}
-
-@Composable
-fun SetUpRoutes(navController: NavHostController) {
-    NavHost(navController, startDestination = Destination.PUPPY_LIST.route) {
-        composable(Destination.PUPPY_LIST.route) {
-            Surface(color = MaterialTheme.colors.background) {
-                Column {
-                    Text(
-                        text = "Pick A Pup",
-                        style = typography.h4,
-                        fontFamily = FontFamily(
-                            fonts = listOf(
-                                Font(R.font.akaya_telivigala_regular)
-                            )
-                        ),
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 8.dp)
-                    )
-                    PuppyListScreen(
-                        puppies = PuppyDataProvider.puppies
-                    ) { puppy ->
-                        navController.currentBackStackEntry
-                            ?.arguments?.putParcelable("puppy", puppy)
-                        navController.navigate(Destination.PUPPY_DETAILS.route)
-                    }
-                }
-            }
-        }
-        composable(Destination.PUPPY_DETAILS.route) {
-            val puppy = navController.previousBackStackEntry
-                ?.arguments?.getParcelable<Puppy>("puppy")
-            PuppyDetailsScreen(puppy = puppy)
-        }
-    }
-}
 
 @Preview("Light Theme", widthDp = 360, heightDp = 640)
 @Composable
 fun LightPreview() {
     AppTheme {
-        PickAPup()
+        InitPickAPup()
     }
 }
 
@@ -109,11 +62,57 @@ fun LightPreview() {
 @Composable
 fun DarkPreview() {
     AppTheme(darkTheme = true) {
-        PickAPup()
+        InitPickAPup()
     }
 }
 
-enum class Destination(val route: String) {
+@Composable
+private fun InitPickAPup() {
+    val navController = rememberNavController()
+    Surface(color = MaterialTheme.colors.background) {
+        SetUpRoutes(navController = navController)
+    }
+}
+
+@Composable
+private fun SetUpRoutes(navController: NavHostController) {
+    NavHost(navController, startDestination = Destination.PUPPY_LIST.route) {
+        composable(Destination.PUPPY_LIST.route) {
+            PuppyListScreen { puppy ->
+                navigateToPuppyDetails(navController = navController, puppy = puppy)
+            }
+        }
+        composable(Destination.PUPPY_DETAILS.route) {
+            val puppy = navController.previousBackStackEntry
+                ?.arguments?.getParcelable<Puppy>(PUPPY_PARCELABLE_KEY)
+            val scope = rememberCoroutineScope()
+            val scaffoldState = rememberScaffoldState()
+            PuppyDetailsScreen(puppy = puppy) { pup ->
+                //TODO Look into whatever is going on here with scaffolds and states
+//                LaunchedEffect(scaffoldState){
+                    scope.launch {
+                        SnackbarHostState().showSnackbar(message = "${pup.name} Adopted")
+                    }
+//                }
+            }
+        }
+    }
+}
+
+
+private enum class Destination(val route: String) {
     PUPPY_LIST("puppy_list"),
     PUPPY_DETAILS("puppy_details")
 }
+
+
+private fun navigateToPuppyDetails(
+    navController: NavHostController,
+    puppy: Puppy
+) {
+    navController.currentBackStackEntry
+        ?.arguments?.putParcelable(PUPPY_PARCELABLE_KEY, puppy)
+    navController.navigate(Destination.PUPPY_DETAILS.route)
+}
+
+private const val PUPPY_PARCELABLE_KEY = "puppy"

@@ -7,7 +7,7 @@ object PuppyDataProvider {
     val puppies = mutableListOf(
         Puppy(
             name = "Musty",
-            ageInMonths = 17,
+            age = "1 year 5 months",
             breed = "Samoyed",
             weight = "4.5 kg",
             height = "50 cm",
@@ -16,7 +16,7 @@ object PuppyDataProvider {
         ),
         Puppy(
             name = "Roger",
-            ageInMonths = 7,
+            age = "7 months",
             breed = "Bulldog",
             weight = "2.4 kg",
             height = "72 cm",
@@ -24,7 +24,7 @@ object PuppyDataProvider {
         ),
         Puppy(
             name = "Snoopy",
-            ageInMonths = 9,
+            age = "9 months",
             breed = "Husky",
             weight = "1.3 kg",
             height = "34 cm",

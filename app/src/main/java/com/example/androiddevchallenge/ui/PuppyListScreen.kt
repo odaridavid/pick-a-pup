@@ -15,14 +15,47 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.androiddevchallenge.R
 import com.example.androiddevchallenge.models.Puppy
 import com.example.androiddevchallenge.theme.green300
 import com.example.androiddevchallenge.theme.red300
 import com.example.androiddevchallenge.theme.typography
 
 @Composable
-fun PuppyListScreen(puppies: List<Puppy>, onClick: (Puppy) -> Unit) {
+fun PuppyListScreen(onPuppyClicked: (Puppy) -> Unit) {
+    Column {
+        PuppyListScreenHeader()
+        PuppyList(puppies = PuppyDataProvider.puppies) { puppy ->
+            onPuppyClicked(puppy)
+        }
+    }
+}
+
+// region Private Api
+
+@Composable
+private fun PuppyListScreenHeader() {
+    Text(
+        text = "Pick A Pup",
+        style = typography.h4,
+        fontFamily = FontFamily(
+            fonts = listOf(
+                Font(R.font.akaya_telivigala_regular)
+            )
+        ),
+        textAlign = TextAlign.Center,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 8.dp)
+    )
+}
+
+@Composable
+private fun PuppyList(puppies: List<Puppy>, onClick: (Puppy) -> Unit) {
     LazyColumn(
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -71,3 +104,5 @@ fun PuppyListScreen(puppies: List<Puppy>, onClick: (Puppy) -> Unit) {
         }
     }
 }
+
+// endregion
