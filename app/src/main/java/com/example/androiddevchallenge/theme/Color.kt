@@ -13,11 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example.androiddevchallenge.ui.theme
+package com.example.androiddevchallenge.theme
 
 import androidx.compose.ui.graphics.Color
 
-val purple200 = Color(0xFFBB86FC)
-val purple500 = Color(0xFF6200EE)
-val purple700 = Color(0xFF3700B3)
-val teal200 = Color(0xFF03DAC5)
+val grey300 = Color(0xFFE0E0E0)
+val grey300Light = Color(0xFFFFFFFF)
+val grey300Dark = Color(0xFFAEAEAE)
+
+val grey700 = Color(0xFF616161)
+val grey700Light = Color(0xFF8E8E8E)
+val grey700Dark = Color(0xFF373737)
+
+val white = Color(0xFFFFFFFF)
+val black = Color(0xFF000000)
+
+val green300 = Color(0xFF81C784)
+val red300 = Color(0xFFE57373)
+
