@@ -23,9 +23,8 @@ interesting problem to solve.
 - I thought of displaying a snackbar when the adopt button is clicked but making a snackbar isn't as straightforward yet :(
 
 ## :camera_flash: Screenshots
+<img src="/results/screenshot_1.png" width="260">&emsp;<img src="/results/screenshot_2.png" width="260">&emsp;
 <img src="/results/shot_list_dark.png" width="260">&emsp;<img src="/results/shot_details_dark.png" width="260">&emsp;
-<img src="/results/shot_list_light.png" width="260">&emsp;<img src="/results/shot_details_light.png" width="260">&emsp;
-<img src="/results/pick_a_pup.gif" width="260">
 
 ## Attributions
 
