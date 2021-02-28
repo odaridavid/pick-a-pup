@@ -43,7 +43,6 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
-
 @Preview("Light Theme", widthDp = 360, heightDp = 640)
 @Composable
 fun LightPreview() {
@@ -79,19 +78,17 @@ private fun SetUpRoutes(navHostController: NavHostController) {
         composable(Destination.PUPPY_DETAILS.route) {
             val puppy = navHostController.previousBackStackEntry
                 ?.arguments?.getParcelable<Puppy>(PUPPY_PARCELABLE_KEY)
-            PuppyDetailsScreen(navHostController = navHostController,puppy = puppy){ adoptedPuppy ->
+            PuppyDetailsScreen(navHostController = navHostController, puppy = puppy) { adoptedPuppy ->
                 // TODO Something with adopted puppy -> Look into side effects
             }
         }
     }
 }
 
-
 enum class Destination(val route: String) {
     PUPPY_LIST("puppy_list"),
     PUPPY_DETAILS("puppy_details")
 }
-
 
 private fun navigateToPuppyDetails(
     navController: NavHostController,

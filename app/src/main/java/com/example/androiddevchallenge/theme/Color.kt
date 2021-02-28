@@ -30,4 +30,3 @@ val black = Color(0xFF000000)
 
 val green300 = Color(0xFF81C784)
 val red300 = Color(0xFFE57373)
-
