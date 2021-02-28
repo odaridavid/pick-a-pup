@@ -19,12 +19,8 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Surface
-import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -35,8 +31,6 @@ import com.example.androiddevchallenge.models.Puppy
 import com.example.androiddevchallenge.theme.AppTheme
 import com.example.androiddevchallenge.ui.PuppyDetailsScreen
 import com.example.androiddevchallenge.ui.PuppyListScreen
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,37 +64,30 @@ fun DarkPreview() {
 private fun InitPickAPup() {
     val navController = rememberNavController()
     Surface(color = MaterialTheme.colors.background) {
-        SetUpRoutes(navController = navController)
+        SetUpRoutes(navHostController = navController)
     }
 }
 
 @Composable
-private fun SetUpRoutes(navController: NavHostController) {
-    NavHost(navController, startDestination = Destination.PUPPY_LIST.route) {
+private fun SetUpRoutes(navHostController: NavHostController) {
+    NavHost(navHostController, startDestination = Destination.PUPPY_LIST.route) {
         composable(Destination.PUPPY_LIST.route) {
             PuppyListScreen { puppy ->
-                navigateToPuppyDetails(navController = navController, puppy = puppy)
+                navigateToPuppyDetails(navController = navHostController, puppy = puppy)
             }
         }
         composable(Destination.PUPPY_DETAILS.route) {
-            val puppy = navController.previousBackStackEntry
+            val puppy = navHostController.previousBackStackEntry
                 ?.arguments?.getParcelable<Puppy>(PUPPY_PARCELABLE_KEY)
-            val scope = rememberCoroutineScope()
-            val scaffoldState = rememberScaffoldState()
-            PuppyDetailsScreen(puppy = puppy) { pup ->
-                //TODO Look into whatever is going on here with scaffolds and states
-//                LaunchedEffect(scaffoldState){
-                    scope.launch {
-                        SnackbarHostState().showSnackbar(message = "${pup.name} Adopted")
-                    }
-//                }
+            PuppyDetailsScreen(navHostController = navHostController,puppy = puppy){ adoptedPuppy ->
+                // TODO Something with adopted puppy -> Look into side effects
             }
         }
     }
 }
 
 
-private enum class Destination(val route: String) {
+enum class Destination(val route: String) {
     PUPPY_LIST("puppy_list"),
     PUPPY_DETAILS("puppy_details")
 }
